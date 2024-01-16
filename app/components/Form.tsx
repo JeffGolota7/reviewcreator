@@ -76,7 +76,6 @@ const Form: React.FC = () => {
           })
           .catch((error) => {
             console.error("Error fetching album details:", error);
-            // Handle error, e.g., show an error message to the user
           })
           .finally(() => toggleIsLoading(false));
       }

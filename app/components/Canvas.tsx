@@ -55,10 +55,6 @@ const Canvas: React.FC = () => {
     updateTracks(tracklistRatingsTemp);
   }, []);
 
-  function filter(node) {
-    return node.tagName !== "i";
-  }
-
   const handleDownload = async () => {
     const canvasContainer = containerRef.current;
 
@@ -118,6 +114,17 @@ const Canvas: React.FC = () => {
     updateTracks(trackRatings);
   };
 
+  const handleRatingChange = (e, index, isTrack) => {
+    const trackRatings = [...tracklistRatings];
+
+    if (isTrack) {
+      trackRatings[index].rating = e.currentTarget.innerText;
+      updateTracks(trackRatings);
+    } else {
+      updateOverallScore(e.currentTarget.innerText);
+    }
+  };
+
   return (
     <>
       <div className={styles.ratingControls}>
@@ -144,31 +151,32 @@ const Canvas: React.FC = () => {
                     >
                       {track.name}
                     </span>
+                    {" ("}
                     <span
                       contentEditable
                       suppressContentEditableWarning={true}
-                      onInput={(e) => handleRatingChange(e, index)}
+                      onInput={(e) => handleRatingChange(e, index, true)}
+                      onFocus={(e) =>
+                        document.execCommand("selectAll", false, null)
+                      }
                     >
-                      {" "}
-                      {`(${track.rating}/10)`}
+                      {`${track.rating ? track.rating : "0"}`}
                     </span>
+                    {"/10)"}
                   </li>
                 );
               })}
           </ul>
-          <h2
-            contentEditable
-            suppressContentEditableWarning={true}
-            onInput={(e) => {
-              const content = e.currentTarget.textContent;
-              const match = content.match(/\((\d+)\/10\)/);
-
-              if (match) {
-                const newRating = parseInt(match[1], 10);
-                updateOverallScore(newRating);
-              }
-            }}
-          >{`(${overallScore}/10)`}</h2>
+          <h2>
+            <span
+              contentEditable
+              suppressContentEditableWarning={true}
+              onInput={(e) => {
+                handleRatingChange(e, 0, false);
+              }}
+            >{`${overallScore}`}</span>
+            {`/10`}
+          </h2>
         </div>
         <div className={styles.buttons}>
           <input
@@ -193,6 +201,8 @@ const Canvas: React.FC = () => {
             style={{
               backgroundImage: `url(${backgroundImage})`,
               filter: "blur(3px) brightness(70%)",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center center",
             }}
           ></div>
           <div className={styles.content}>
