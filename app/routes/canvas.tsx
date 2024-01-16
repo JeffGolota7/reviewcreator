@@ -1,4 +1,4 @@
-import Form from "../components/Form";
+import Canvas from "../components/Canvas";
 import "../root.module.css";
 export function headers({
   loaderHeaders,
@@ -20,7 +20,7 @@ export function headers({
 export default function Index() {
   return (
     <>
-      <Form />
+      <Canvas />
     </>
   );
 }

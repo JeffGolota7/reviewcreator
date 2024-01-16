@@ -1,0 +1,68 @@
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+body {
+  background-color: rgb(35, 35, 35);
+  color: white;
+}
+
+.field {
+  margin: 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.albumFields {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.resultsContainer {
+  position: relative;
+  width: 75%;
+}
+
+.results {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  background-color: grey;
+  border: 1px solid green;
+  max-height: 300px;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+.result {
+  border-top: 1px dashed darkgrey;
+  border-bottom: 1px dashed darkgrey;
+  padding: 0.25rem 0.5rem;
+  color: white;
+  font-size: 11px;
+}
+.search {
+  width: 100%;
+  height: 2rem;
+}
+.fields {
+  margin-top: 300px;
+}
+
+.nextButton {
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  background-color: green;
+  color: white;
+  cursor: pointer;
+}
+
+.tracklist {
+  height: auto;
+}
