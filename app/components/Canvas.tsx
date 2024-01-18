@@ -62,12 +62,14 @@ const Canvas: React.FC = () => {
       setIsDownloading(true);
       try {
         // Use dom-to-image to capture the content of the canvasContainer
-        domToPng(canvasContainer).then((dataUrl) => {
-          const link = document.createElement("a");
-          link.download = `${albumDetails.title}.png`;
-          link.href = dataUrl;
-          link.click();
-        });
+        domToPng(canvasContainer, { allowTaint: true, useCORS: true }).then(
+          (dataUrl) => {
+            const link = document.createElement("a");
+            link.download = `${albumDetails.title}.png`;
+            link.href = dataUrl;
+            link.click();
+          }
+        );
       } catch (error) {
         console.error("Error generating canvas:", error);
       } finally {
