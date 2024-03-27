@@ -14,11 +14,11 @@ const Canvas: React.FC = () => {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
   const songTiers = [
-    { tierName: "Skit/Interlude", tierColor: "#12B1B8" },
-    { tierName: "Good", tierColor: "#6FE17E" },
     { tierName: "Average", tierColor: "#FFFFFF" },
-    { tierName: "Bad", tierColor: "#F7200E" },
+    { tierName: "Good", tierColor: "#6FE17E" },
     { tierName: "Favorite", tierColor: "#EDF12F" },
+    { tierName: "Skit/Interlude", tierColor: "#12B1B8" },
+    { tierName: "Bad", tierColor: "#F7200E" },
   ];
 
   const calculateFontSize = (
@@ -49,7 +49,7 @@ const Canvas: React.FC = () => {
       tracklistRatingsTemp.push({
         name: trackName.title,
         rating: 0,
-        tier: songTiers[2],
+        tier: songTiers[0],
       });
     });
     updateTracks(tracklistRatingsTemp);
