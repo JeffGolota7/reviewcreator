@@ -127,6 +127,19 @@ const Canvas: React.FC = () => {
     }
   };
 
+  const handleTrackRatingClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const trackElement = e.target as HTMLSpanElement;
+
+    trackElement.focus();
+    const selection = window.getSelection();
+    if (selection) {
+      const range = document.createRange();
+      range.selectNodeContents(trackElement);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  };
+
   return (
     <>
       <div className={styles.ratingControls}>
@@ -161,6 +174,7 @@ const Canvas: React.FC = () => {
                       onFocus={(e) =>
                         document.execCommand("selectAll", false, null)
                       }
+                      onClick={handleTrackRatingClick}
                     >
                       {`${track.rating ? track.rating : "0"}`}
                     </span>
@@ -176,6 +190,7 @@ const Canvas: React.FC = () => {
               onInput={(e) => {
                 handleRatingChange(e, 0, false);
               }}
+              onClick={handleTrackRatingClick}
             >{`${overallScore}`}</span>
             {`/10`}
           </h2>
@@ -256,12 +271,15 @@ const Canvas: React.FC = () => {
                 <div className={styles.bottom}>
                   <div className={styles.coverAndRating}>
                     <div className={styles.coverRating}>
+                      {"Cover: "}
                       <span
                         contentEditable
                         suppressContentEditableWarning={true}
+                        onClick={handleTrackRatingClick}
                       >
-                        Cover: 0/10
+                        0
                       </span>
+                      /10
                     </div>
                     <img
                       className={styles.cover}
