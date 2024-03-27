@@ -120,8 +120,17 @@ const Canvas: React.FC = () => {
     const trackRatings = [...tracklistRatings];
 
     if (isTrack) {
+      let totalScore = 0;
+
       trackRatings[index].rating = e.currentTarget.innerText;
       updateTracks(trackRatings);
+
+      tracklistRatings.forEach((track) => {
+        totalScore = parseInt(totalScore) + parseInt(track.rating);
+      });
+
+      const averageScore = Math.round(totalScore / trackRatings.length);
+      updateOverallScore(averageScore);
     } else {
       updateOverallScore(e.currentTarget.innerText);
     }
