@@ -6,8 +6,10 @@ import styles from "../styles/Canvas.module.css";
 const Canvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const albumDetails = location.state && location.state.albumDetails;
   const [tracklistRatings, updateTracks] = useState([{}]);
+  const [albumDetails, setAlbumDetails] = useState<any | null>(
+    location.state && location.state.albumDetails
+  );
   const [overallScore, updateOverallScore] = useState(0);
 
   const [isDownloading, setIsDownloading] = useState(false);
@@ -44,16 +46,46 @@ const Canvas: React.FC = () => {
   };
 
   useEffect(() => {
-    const tracklistRatingsTemp = [];
-    albumDetails.tracklist.forEach((trackName: any) => {
-      tracklistRatingsTemp.push({
-        name: trackName.title,
-        rating: 0,
-        tier: songTiers[0],
+    // Retrieve saved album details and ratings from localStorage
+    const savedAlbumDetails = localStorage.getItem("albumDetails");
+    const savedTracklistRatings = localStorage.getItem("tracklistRatings");
+    const savedOverallScore = localStorage.getItem("overallScore");
+
+    if (savedAlbumDetails) {
+      setAlbumDetails(JSON.parse(savedAlbumDetails));
+    }
+
+    if (savedTracklistRatings && savedOverallScore) {
+      updateTracks(JSON.parse(savedTracklistRatings));
+      updateOverallScore(parseInt(savedOverallScore));
+    } else {
+      const tracklistRatingsTemp = [];
+      albumDetails.tracklist.forEach((trackName: any) => {
+        tracklistRatingsTemp.push({
+          name: trackName.title,
+          rating: 0,
+          tier: songTiers[0],
+        });
       });
-    });
-    updateTracks(tracklistRatingsTemp);
+      updateTracks(tracklistRatingsTemp);
+    }
   }, []);
+
+  useEffect(() => {
+    // Save album details, ratings, and overall score to localStorage whenever they change
+    localStorage.setItem("albumDetails", JSON.stringify(albumDetails));
+
+    if (tracklistRatings.length > 1) {
+      localStorage.setItem(
+        "tracklistRatings",
+        JSON.stringify(tracklistRatings)
+      );
+    }
+
+    if (overallScore !== 0) {
+      localStorage.setItem("overallScore", overallScore.toString());
+    }
+  }, [albumDetails, tracklistRatings, overallScore]);
 
   const handleDownload = async () => {
     const canvasContainer = containerRef.current;
@@ -232,9 +264,9 @@ const Canvas: React.FC = () => {
             }}
           ></div>
           <div className={styles.content}>
-            <h2
-              className={styles.title}
-            >{`${albumDetails.artist} - ${albumDetails.title}`}</h2>
+            <h2 className={styles.title}>{`${
+              albumDetails ? albumDetails.artist : ""
+            } - ${albumDetails ? albumDetails.title : ""}`}</h2>
             <div className={styles.albumDetails}>
               <div className={styles.left}>
                 <ul>
@@ -292,7 +324,7 @@ const Canvas: React.FC = () => {
                     </div>
                     <img
                       className={styles.cover}
-                      src={albumDetails.coverSrc}
+                      src={albumDetails ? albumDetails.coverSrc : ""}
                       alt=""
                     />
                   </div>

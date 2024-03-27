@@ -65,6 +65,11 @@
   flex-direction: column;
   justify-content: center;
   width: 90%;
+  font-size: 1.5rem;
+}
+
+.trackRatingControl {
+  margin: 0.75rem 0;
 }
 
 button {
