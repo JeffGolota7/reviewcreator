@@ -11,6 +11,7 @@ const Canvas: React.FC = () => {
     location.state && location.state.albumDetails
   );
   const [overallScore, updateOverallScore] = useState(0);
+  let run = false;
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
@@ -51,24 +52,30 @@ const Canvas: React.FC = () => {
     const savedTracklistRatings = localStorage.getItem("tracklistRatings");
     const savedOverallScore = localStorage.getItem("overallScore");
 
-    if (savedAlbumDetails) {
-      setAlbumDetails(JSON.parse(savedAlbumDetails));
+    if (!run) {
+      if (
+        savedAlbumDetails &&
+        savedTracklistRatings &&
+        savedOverallScore &&
+        JSON.parse(savedAlbumDetails).title === albumDetails.title
+      ) {
+        setAlbumDetails(JSON.parse(savedAlbumDetails));
+        updateTracks(JSON.parse(savedTracklistRatings));
+        updateOverallScore(parseInt(savedOverallScore));
+      } else {
+        const tracklistRatingsTemp = [];
+        albumDetails.tracklist.forEach((trackName: any) => {
+          tracklistRatingsTemp.push({
+            name: trackName.title,
+            rating: 0,
+            tier: songTiers[0],
+          });
+        });
+        updateTracks(tracklistRatingsTemp);
+      }
     }
 
-    if (savedTracklistRatings && savedOverallScore) {
-      updateTracks(JSON.parse(savedTracklistRatings));
-      updateOverallScore(parseInt(savedOverallScore));
-    } else {
-      const tracklistRatingsTemp = [];
-      albumDetails.tracklist.forEach((trackName: any) => {
-        tracklistRatingsTemp.push({
-          name: trackName.title,
-          rating: 0,
-          tier: songTiers[0],
-        });
-      });
-      updateTracks(tracklistRatingsTemp);
-    }
+    run = true;
   }, []);
 
   useEffect(() => {
@@ -260,7 +267,8 @@ const Canvas: React.FC = () => {
               backgroundImage: `url(${backgroundImage})`,
               filter: "blur(3px) brightness(70%)",
               backgroundRepeat: "no-repeat",
-              backgroundPosition: "center center",
+              backgroundPosition: "center",
+              backgroundSize: "cover",
             }}
           ></div>
           <div className={styles.content}>
