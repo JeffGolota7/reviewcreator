@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { domToPng } from "modern-screenshot";
+import domtoimage from "dom-to-image";
 import { useLocation } from "@remix-run/react";
 import styles from "../styles/Canvas.module.css";
 
@@ -101,14 +102,35 @@ const Canvas: React.FC = () => {
       setIsDownloading(true);
       try {
         // Use dom-to-image to capture the content of the canvasContainer
-        domToPng(canvasContainer, { allowTaint: true, useCORS: true }).then(
-          (dataUrl) => {
-            const link = document.createElement("a");
-            link.download = `${albumDetails.title}.png`;
-            link.href = dataUrl;
-            link.click();
-          }
-        );
+        // domToPng(canvasContainer, { allowTaint: true, useCORS: true }).then(
+        //   (dataUrl) => {
+        //     const link = document.createElement("a");
+        //     link.download = `${albumDetails.title}.png`;
+        //     link.href = dataUrl;
+        //     link.click();
+        //   }
+        // );
+        // domtoimage
+        //   .toPng(canvasContainer)
+        //   .then(function (dataUrl) {
+        //     const link = document.createElement("a");
+        //     link.download = `${albumDetails.title}.png`;
+        //     link.href = dataUrl;
+        //     link.click();
+        //   })
+        //   .catch(function (error) {
+        //     console.error("oops, something went wrong!", error);
+        //   });
+        domtoimage
+          .toPng(canvasContainer)
+          .then(function (dataUrl) {
+            var img = new Image();
+            img.src = dataUrl;
+            document.body.appendChild(img);
+          })
+          .catch(function (error) {
+            console.error("oops, something went wrong!", error);
+          });
       } catch (error) {
         console.error("Error generating canvas:", error);
       } finally {
