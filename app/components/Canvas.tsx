@@ -125,8 +125,13 @@ const Canvas: React.FC = () => {
           .toPng(canvasContainer)
           .then(function (dataUrl) {
             var img = new Image();
+            img.onload = function () {
+              document.body.appendChild(img);
+            };
+            img.onerror = function (error) {
+              console.error("Failed to load image", error);
+            };
             img.src = dataUrl;
-            document.body.appendChild(img);
           })
           .catch(function (error) {
             console.error("oops, something went wrong!", error);

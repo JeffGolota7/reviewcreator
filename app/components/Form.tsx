@@ -57,7 +57,7 @@ const Form: React.FC = () => {
       };
       axios
         .get(
-          `https://musicbrainz.org/ws/2/release/${searchResults[index].id}?inc=recordings&fmt=json`
+          `https://musicbrainz.org/ws/2/release/${searchResults[index].id}?inc=recordings&fmt=json/`
         )
         .then((response) => {
           album.title = response.data.title;
@@ -73,12 +73,15 @@ const Form: React.FC = () => {
           setIsLoading(false);
         });
       axios
-        .get(`https://coverartarchive.org/release/${searchResults[index].id}`, {
-          params: {
-            front: "true", // Ensure front cover
-            size: "medium", // Choose a smaller size
-          },
-        })
+        .get(
+          `https://coverartarchive.org/release/${searchResults[index].id}/`,
+          {
+            params: {
+              front: "true", // Ensure front cover
+              size: "medium", // Choose a smaller size
+            },
+          }
+        )
         .then((response) => {
           console.log("response - cover", response.data);
           album.coverSrc =
