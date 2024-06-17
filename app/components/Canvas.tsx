@@ -201,8 +201,8 @@ const Canvas: React.FC = () => {
           <div
             className={styles.backgroundImage}
             style={{
-              backgroundImage: `url(${backgroundImage})`,
-              filter: "blur(3px) brightness(70%)",
+              background: `url(${backgroundImage}) center center/cover`,
+              filter: "blur(5px) brightness(70%)",
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center center",
             }}

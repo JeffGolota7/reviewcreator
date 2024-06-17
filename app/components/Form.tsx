@@ -49,7 +49,9 @@ const Form: React.FC = () => {
         .get(`https://coverartarchive.org/release/${searchResults[index].id}`)
         .then((response) => {
           console.log("response - cover", response.data);
-          album.coverSrc = response.data.images[0].image;
+          album.coverSrc =
+            response.data.images[0].thumbnails.small ??
+            response.data.images[0].image;
 
           setAlbumDetails(album);
         })
