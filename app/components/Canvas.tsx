@@ -6,19 +6,22 @@ import styles from "../styles/Canvas.module.css";
 const Canvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const albumDetails = location.state && location.state.albumDetails;
   const [tracklistRatings, updateTracks] = useState([{}]);
+  const [albumDetails, setAlbumDetails] = useState<any | null>(
+    location.state && location.state.albumDetails
+  );
   const [overallScore, updateOverallScore] = useState(0);
+  let run = false;
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
   const songTiers = [
-    { tierName: "Skit/Interlude", tierColor: "#12B1B8" },
-    { tierName: "Good", tierColor: "#6FE17E" },
     { tierName: "Average", tierColor: "#FFFFFF" },
-    { tierName: "Bad", tierColor: "#F7200E" },
+    { tierName: "Good", tierColor: "#6FE17E" },
     { tierName: "Favorite", tierColor: "#EDF12F" },
+    { tierName: "Skit/Interlude", tierColor: "#12B1B8" },
+    { tierName: "Bad", tierColor: "#F7200E" },
   ];
 
   const calculateFontSize = (
@@ -44,16 +47,52 @@ const Canvas: React.FC = () => {
   };
 
   useEffect(() => {
-    const tracklistRatingsTemp = [];
-    albumDetails.tracklist.forEach((trackName: any) => {
-      tracklistRatingsTemp.push({
-        name: trackName.title,
-        rating: 0,
-        tier: songTiers[2],
-      });
-    });
-    updateTracks(tracklistRatingsTemp);
+    // Retrieve saved album details and ratings from localStorage
+    const savedAlbumDetails = localStorage.getItem("albumDetails");
+    const savedTracklistRatings = localStorage.getItem("tracklistRatings");
+    const savedOverallScore = localStorage.getItem("overallScore");
+
+    if (!run) {
+      if (
+        savedAlbumDetails &&
+        savedTracklistRatings &&
+        savedOverallScore &&
+        JSON.parse(savedAlbumDetails).title === albumDetails.title
+      ) {
+        setAlbumDetails(JSON.parse(savedAlbumDetails));
+        updateTracks(JSON.parse(savedTracklistRatings));
+        updateOverallScore(parseInt(savedOverallScore));
+      } else {
+        const tracklistRatingsTemp = [];
+        albumDetails.tracklist.forEach((trackName: any) => {
+          tracklistRatingsTemp.push({
+            name: trackName.title,
+            rating: 0,
+            tier: songTiers[0],
+          });
+        });
+        updateTracks(tracklistRatingsTemp);
+      }
+    }
+
+    run = true;
   }, []);
+
+  useEffect(() => {
+    // Save album details, ratings, and overall score to localStorage whenever they change
+    localStorage.setItem("albumDetails", JSON.stringify(albumDetails));
+
+    if (tracklistRatings.length > 1) {
+      localStorage.setItem(
+        "tracklistRatings",
+        JSON.stringify(tracklistRatings)
+      );
+    }
+
+    if (overallScore !== 0) {
+      localStorage.setItem("overallScore", overallScore.toString());
+    }
+  }, [albumDetails, tracklistRatings, overallScore]);
 
   const handleDownload = async () => {
     const canvasContainer = containerRef.current;
@@ -120,10 +159,32 @@ const Canvas: React.FC = () => {
     const trackRatings = [...tracklistRatings];
 
     if (isTrack) {
+      let totalScore = 0;
+
       trackRatings[index].rating = e.currentTarget.innerText;
       updateTracks(trackRatings);
+
+      tracklistRatings.forEach((track) => {
+        totalScore = parseInt(totalScore) + parseInt(track.rating);
+      });
+
+      const averageScore = Math.round(totalScore / trackRatings.length);
+      updateOverallScore(averageScore);
     } else {
       updateOverallScore(e.currentTarget.innerText);
+    }
+  };
+
+  const handleTrackRatingClick = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const trackElement = e.target as HTMLSpanElement;
+
+    trackElement.focus();
+    const selection = window.getSelection();
+    if (selection) {
+      const range = document.createRange();
+      range.selectNodeContents(trackElement);
+      selection.removeAllRanges();
+      selection.addRange(range);
     }
   };
 
@@ -161,6 +222,7 @@ const Canvas: React.FC = () => {
                       onFocus={(e) =>
                         document.execCommand("selectAll", false, null)
                       }
+                      onClick={handleTrackRatingClick}
                     >
                       {`${track.rating ? track.rating : "0"}`}
                     </span>
@@ -176,6 +238,7 @@ const Canvas: React.FC = () => {
               onInput={(e) => {
                 handleRatingChange(e, 0, false);
               }}
+              onClick={handleTrackRatingClick}
             >{`${overallScore}`}</span>
             {`/10`}
           </h2>
@@ -204,13 +267,14 @@ const Canvas: React.FC = () => {
               background: `url(${backgroundImage}) center center/cover`,
               filter: "blur(5px) brightness(70%)",
               backgroundRepeat: "no-repeat",
-              backgroundPosition: "center center",
+              backgroundPosition: "center",
+              backgroundSize: "cover",
             }}
           ></div>
           <div className={styles.content}>
-            <h2
-              className={styles.title}
-            >{`${albumDetails.artist} - ${albumDetails.title}`}</h2>
+            <h2 className={styles.title}>{`${
+              albumDetails ? albumDetails.artist : ""
+            } - ${albumDetails ? albumDetails.title : ""}`}</h2>
             <div className={styles.albumDetails}>
               <div className={styles.left}>
                 <ul>
@@ -256,16 +320,19 @@ const Canvas: React.FC = () => {
                 <div className={styles.bottom}>
                   <div className={styles.coverAndRating}>
                     <div className={styles.coverRating}>
+                      {"Cover: "}
                       <span
                         contentEditable
                         suppressContentEditableWarning={true}
+                        onClick={handleTrackRatingClick}
                       >
-                        Cover: 0/10
+                        0
                       </span>
+                      /10
                     </div>
                     <img
                       className={styles.cover}
-                      src={albumDetails.coverSrc}
+                      src={albumDetails ? albumDetails.coverSrc : ""}
                       alt=""
                     />
                   </div>
