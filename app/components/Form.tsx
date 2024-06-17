@@ -57,7 +57,7 @@ const Form: React.FC = () => {
       };
       axios
         .get(
-          `https://musicbrainz.org/ws/2/release/${searchResults[index].id}?inc=recordings&fmt=json/`
+          `https://musicbrainz.org/ws/2/release/${searchResults[index].id}?inc=recordings&fmt=json`
         )
         .then((response) => {
           album.title = response.data.title;

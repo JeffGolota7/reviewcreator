@@ -43,9 +43,9 @@ body {
 .result {
   border-top: 1px dashed darkgrey;
   border-bottom: 1px dashed darkgrey;
-  padding: 0.25rem 0.5rem;
+  padding: 1rem 0.5rem;
   color: white;
-  font-size: 11px;
+  font-size: 14px;
 }
 .search {
   width: 100%;
