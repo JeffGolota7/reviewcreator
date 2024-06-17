@@ -35,6 +35,10 @@ export default function App() {
           href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
           rel="stylesheet"
         ></link>
+        <meta
+          http-equiv="Content-Security-Policy"
+          content="upgrade-insecure-requests"
+        />
 
         {/* All meta exports on all routes will go here */}
         <Meta />
