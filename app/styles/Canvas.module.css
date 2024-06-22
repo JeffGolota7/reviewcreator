@@ -105,3 +105,50 @@ button {
 .right {
   height: 100%;
 }
+
+.right {
+  height: 90%;
+}
+
+.modal {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) !important;
+  background: white;
+  padding: 2rem;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 70%;
+  height: 80%;
+  z-index: 9000;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 8000; /* Ensure it's below the modal */
+}
+
+.resultImg {
+  overflow: scroll;
+  width: 100%;
+  height: 90%;
+}
+
+.button {
+  padding: 0.75rem 1rem;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 8px;
+  background-color: green;
+  color: white;
+  cursor: pointer;
+}

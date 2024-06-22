@@ -1,17 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import { domToPng } from "modern-screenshot";
 import domtoimage from "dom-to-image";
-import { useLocation } from "@remix-run/react";
+import { useLoaderData, useLocation } from "@remix-run/react";
 import styles from "../styles/Canvas.module.css";
+import { AnimatePresence, motion } from "framer-motion";
 
 const Canvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const [tracklistRatings, updateTracks] = useState([{}]);
   const [albumDetails, setAlbumDetails] = useState<any | null>(
     location.state && location.state.albumDetails
   );
   const [overallScore, updateOverallScore] = useState(0);
+  const [coverScore, updateCoverScore] = useState(0);
+  const [showModal, toggleModal] = useState(false);
   let run = false;
 
   const [isDownloading, setIsDownloading] = useState(false);
@@ -65,9 +69,9 @@ const Canvas: React.FC = () => {
         updateOverallScore(parseInt(savedOverallScore));
       } else {
         const tracklistRatingsTemp = [];
-        albumDetails.tracklist.forEach((trackName: any) => {
+        albumDetails.trackList.forEach((trackName: any) => {
           tracklistRatingsTemp.push({
-            name: trackName.title,
+            name: trackName,
             rating: 0,
             tier: songTiers[0],
           });
@@ -95,49 +99,36 @@ const Canvas: React.FC = () => {
     }
   }, [albumDetails, tracklistRatings, overallScore]);
 
-  const handleDownload = async () => {
-    const canvasContainer = containerRef.current;
+  const handleImageGen = async () => {
+    const containerElement = containerRef.current;
+    const modal = modalRef.current;
 
-    if (canvasContainer) {
+    if (containerElement) {
       setIsDownloading(true);
+
+      if (!showModal) {
+        toggleModal(true);
+      }
+
       try {
-        // Use dom-to-image to capture the content of the canvasContainer
-        // domToPng(canvasContainer, { allowTaint: true, useCORS: true }).then(
-        //   (dataUrl) => {
-        //     const link = document.createElement("a");
-        //     link.download = `${albumDetails.title}.png`;
-        //     link.href = dataUrl;
-        //     link.click();
-        //   }
-        // );
-        // domtoimage
-        //   .toPng(canvasContainer)
-        //   .then(function (dataUrl) {
-        //     const link = document.createElement("a");
-        //     link.download = `${albumDetails.title}.png`;
-        //     link.href = dataUrl;
-        //     link.click();
-        //   })
-        //   .catch(function (error) {
-        //     console.error("oops, something went wrong!", error);
-        //   });
-        domtoimage
-          .toPng(canvasContainer)
-          .then(function (dataUrl) {
-            var img = new Image();
-            img.onload = function () {
-              document.body.appendChild(img);
-            };
-            img.onerror = function (error) {
-              console.error("Failed to load image", error);
-            };
-            img.src = dataUrl;
-          })
-          .catch(function (error) {
-            console.error("oops, something went wrong!", error);
-          });
+        const dataUrl = await domtoimage.toPng(containerElement);
+
+        // Remove any existing images inside the modal
+        while (modal?.firstChild) {
+          modal?.removeChild(modal?.firstChild);
+        }
+
+        // Create and append the new image
+        const img = new Image();
+        img.onload = function () {
+          modal?.appendChild(img);
+        };
+        img.onerror = function (error) {
+          console.error("Failed to load image", error);
+        };
+        img.src = dataUrl;
       } catch (error) {
-        console.error("Error generating canvas:", error);
+        console.error("oops, something went wrong!", error);
       } finally {
         setIsDownloading(false);
       }
@@ -182,7 +173,7 @@ const Canvas: React.FC = () => {
     updateTracks(trackRatings);
   };
 
-  const handleRatingChange = (e, index, isTrack) => {
+  const handleRatingChange = (e, index, isTrack, type) => {
     const trackRatings = [...tracklistRatings];
 
     if (isTrack) {
@@ -198,7 +189,11 @@ const Canvas: React.FC = () => {
       const averageScore = Math.round(totalScore / trackRatings.length);
       updateOverallScore(averageScore);
     } else {
-      updateOverallScore(e.currentTarget.innerText);
+      if (type === "overall") {
+        updateOverallScore(e.currentTarget.innerText);
+      } else {
+        updateCoverScore(e.currentTarget.innerText);
+      }
     }
   };
 
@@ -217,6 +212,48 @@ const Canvas: React.FC = () => {
 
   return (
     <>
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            className={styles.modalOverlay}
+            onClick={(e) => {
+              if (
+                !e.target.classList.contains(styles.modal) &&
+                !e.target.classList.contains(styles.button)
+              ) {
+                toggleModal(false);
+              }
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.div
+              className={styles.modal}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className={styles.resultImg} ref={modalRef}></div>
+              <motion.button
+                className={styles.button}
+                disabled={!albumDetails}
+                whileHover={{
+                  scale: 1.2,
+                  transition: { duration: 1 },
+                }}
+                whileTap={{ scale: 0.9 }}
+                style={{ justifySelf: "center" }}
+                onClick={handleImageGen}
+              >
+                Re-Generate
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className={styles.ratingControls}>
         <div className={styles.trackRatings}>
           <ul>
@@ -263,10 +300,22 @@ const Canvas: React.FC = () => {
               contentEditable
               suppressContentEditableWarning={true}
               onInput={(e) => {
-                handleRatingChange(e, 0, false);
+                handleRatingChange(e, 0, false, "overall");
               }}
               onClick={handleTrackRatingClick}
             >{`${overallScore}`}</span>
+            {`/10`}
+          </h2>
+          <h2>
+            {"Cover: "}
+            <span
+              contentEditable
+              suppressContentEditableWarning={true}
+              onInput={(e) => {
+                handleRatingChange(e, 0, false, "cover");
+              }}
+              onClick={handleTrackRatingClick}
+            >{`${coverScore}`}</span>
             {`/10`}
           </h2>
         </div>
@@ -276,8 +325,8 @@ const Canvas: React.FC = () => {
             accept="image/*"
             onChange={handleBackgroundImageChange}
           />
-          <button onClick={handleDownload} disabled={isDownloading}>
-            {isDownloading ? "Downloading..." : "Download Image"}
+          <button onClick={handleImageGen} disabled={isDownloading}>
+            {isDownloading ? "Downloading..." : "Generate Image"}
           </button>
         </div>
       </div>
@@ -353,7 +402,7 @@ const Canvas: React.FC = () => {
                         suppressContentEditableWarning={true}
                         onClick={handleTrackRatingClick}
                       >
-                        0
+                        {coverScore}
                       </span>
                       /10
                     </div>
