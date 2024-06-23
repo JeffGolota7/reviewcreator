@@ -10,7 +10,6 @@ const Canvas: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const [isSnap, toggleSnap] = useState(true);
   const [tracklistRatings, updateTracks] = useState([{}]);
   const [albumDetails, setAlbumDetails] = useState<any | null>(
     location.state && location.state.albumDetails
@@ -335,14 +334,6 @@ const Canvas: React.FC = () => {
           >
             {isDownloading ? "Downloading..." : "Generate Image"}
           </button>
-          <label className={styles.switch}>
-            <input
-              type="checkbox"
-              checked={isSnap}
-              onChange={(e) => toggleSnap(e.target.checked)}
-            />
-            <span className={`${styles.slider} ${styles.round}`}></span>
-          </label>
         </div>
       </div>
       <div className={styles.canvasContainer}>
@@ -363,12 +354,9 @@ const Canvas: React.FC = () => {
             }}
           ></div>
           <div className={styles.content}>
-            <h2
-              className={styles.title}
-              style={{ marginTop: `${isSnap ? "300px" : "50px"}` }}
-            >{`${albumDetails ? albumDetails.artist : ""} - ${
-              albumDetails ? albumDetails.title : ""
-            }`}</h2>
+            <h2 className={styles.title} style={{ marginTop: "200px" }}>{`${
+              albumDetails ? albumDetails.artist : ""
+            } - ${albumDetails ? albumDetails.title : ""}`}</h2>
             <div className={styles.albumDetails}>
               <div className={styles.left} ref={leftRef}>
                 <ul>
