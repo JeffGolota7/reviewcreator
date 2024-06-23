@@ -154,7 +154,6 @@ const Form: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        {isLoading && <div>Loading...</div>}
         {searchResults.length > 0 && (
           <ul className={styles.results}>
             {searchResults.map((result: any, index: number) => {
