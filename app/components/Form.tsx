@@ -27,7 +27,6 @@ const Form: React.FC = () => {
             { headers: headers }
           )
           .then((response) => {
-            console.log(response);
             setSearchResults(response.data.albums.items);
           })
           .catch((error) => {
@@ -189,10 +188,13 @@ const Form: React.FC = () => {
                   className={styles.result}
                   onClick={() => updateAlbumInfo(result.id)}
                 >
-                  <img
-                    src={result.images[0].url}
-                    className={styles.resultImg}
-                  />
+                  {result.images[0].url && (
+                    <img
+                      src={result.images[0].url}
+                      className={styles.resultImg}
+                    />
+                  )}
+
                   <div className={styles.text}>
                     <h4 className={styles.albumTitle}>{result.name}</h4>
                     <h5 className={styles.artist}>{result.artists[0].name}</h5>

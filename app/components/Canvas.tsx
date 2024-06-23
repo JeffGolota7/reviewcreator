@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 const Canvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
+  const leftRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const [tracklistRatings, updateTracks] = useState([{}]);
   const [albumDetails, setAlbumDetails] = useState<any | null>(
@@ -30,25 +31,24 @@ const Canvas: React.FC = () => {
   ];
 
   const calculateFontSize = (
-    containerWidth: number,
+    containerHeight: number,
     numberOfTracks: number
   ) => {
-    const maxFontSize = 40;
-    const minFontSize = 10;
+    const maxFontSize = 40; // Maximum font size
+    const minFontSize = 10; // Minimum font size
 
-    // Adjust these values based on your specific needs
-    const maxWidth = 100; // 70% of the canvas width
-    const minWidth = 20; // Minimum width for the container
+    // Calculate the available height per item
+    const availableHeightPerItem = containerHeight / numberOfTracks;
 
-    const adjustedContainerWidth = Math.max(
-      minWidth,
-      (maxWidth / 100) * containerWidth
+    console.log(containerHeight);
+
+    // Ensure the calculated font size is within the defined min and max limits
+    const fontSize = Math.max(
+      minFontSize,
+      Math.min(maxFontSize, availableHeightPerItem)
     );
 
-    return `${Math.max(
-      minFontSize,
-      Math.min(maxFontSize, adjustedContainerWidth / numberOfTracks)
-    )}px`;
+    return `${fontSize}px`;
   };
 
   useEffect(() => {
@@ -352,7 +352,7 @@ const Canvas: React.FC = () => {
               albumDetails ? albumDetails.artist : ""
             } - ${albumDetails ? albumDetails.title : ""}`}</h2>
             <div className={styles.albumDetails}>
-              <div className={styles.left}>
+              <div className={styles.left} ref={leftRef}>
                 <ul>
                   {tracklistRatings &&
                     tracklistRatings.map((track: any) => {
@@ -368,9 +368,10 @@ const Canvas: React.FC = () => {
                         textColor = "#FFFFFF";
                       }
                       const fontSize = calculateFontSize(
-                        containerRef.current?.offsetWidth || 1080, // Use container width or fallback to canvas width
+                        900, // Use container width or fallback to canvas width
                         tracklistRatings.length
                       );
+
                       return (
                         <li key={track.name} style={{ fontSize: fontSize }}>
                           <span style={{ color: textColor }}>{track.name}</span>{" "}
