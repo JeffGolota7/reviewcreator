@@ -49,6 +49,8 @@ const Canvas: React.FC = () => {
       Math.min(maxFontSize, availableHeightPerItem)
     );
 
+    console.log(fontSize);
+
     return `${fontSize}px`;
   };
 
@@ -326,7 +328,11 @@ const Canvas: React.FC = () => {
             accept="image/*"
             onChange={handleBackgroundImageChange}
           />
-          <button onClick={() => toggleModal(true)} disabled={isDownloading}>
+          <button
+            className={styles.button}
+            onClick={() => toggleModal(true)}
+            disabled={isDownloading}
+          >
             {isDownloading ? "Downloading..." : "Generate Image"}
           </button>
           <label className={styles.switch}>
@@ -380,7 +386,7 @@ const Canvas: React.FC = () => {
                         textColor = "#FFFFFF";
                       }
                       const fontSize = calculateFontSize(
-                        900, // Use container width or fallback to canvas width
+                        700, // Use container width or fallback to canvas width
                         tracklistRatings.length
                       );
 
