@@ -10,6 +10,7 @@ import {
 import { cssBundleHref } from "@remix-run/css-bundle";
 
 import globalStylesheetUrl from "./root.css";
+import NavBar from "./components/NavBar";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
@@ -48,6 +49,7 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <NavBar />
         {/* Child routes go here */}
         <Outlet />
 

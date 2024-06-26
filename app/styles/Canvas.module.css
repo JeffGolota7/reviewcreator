@@ -67,8 +67,14 @@
   font-size: 1.5rem;
 }
 
+.imageResult {
+  width: 1080px;
+  height: 1920px;
+}
+
 .trackRatingControl {
   margin: 0.75rem 0;
+  font-size: 16px;
 }
 
 button {

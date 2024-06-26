@@ -110,21 +110,32 @@ const Form: React.FC = () => {
             >
               <div className={styles.albumDetails}>
                 <h3 style={{ marginBottom: "10px" }}>Everything Look Right?</h3>
-                <img
-                  src={albumDetails.coverSrc}
-                  style={{
-                    maxWidth: "100px",
-                    height: "auto",
-                    marginBottom: "10px",
-                  }}
-                ></img>
-                <h5>{`Title: ${albumDetails.title}`}</h5>
-                <h5>{`By: ${albumDetails.artist}`}</h5>
-                <ul style={{ listStyleType: "none" }}>
-                  {albumDetails.trackList.map((track, i) => (
-                    <li style={{ fontSize: "12px" }}>{`${i + 1}. ${track}`}</li>
-                  ))}
-                </ul>
+                <div className={styles.topSection}>
+                  <img
+                    src={albumDetails.coverSrc}
+                    style={{
+                      maxWidth: "100px",
+                      maxHeight: "100px",
+                      marginBottom: "10px",
+                    }}
+                  ></img>
+                  <div className={styles.text}>
+                    <h5>{`Title: ${albumDetails.title}`}</h5>
+                    <h5>{`By: ${albumDetails.artist}`}</h5>
+                  </div>
+                </div>
+                <div className={styles.bottomSection}>
+                  <ul
+                    style={{ listStyleType: "none" }}
+                    className={styles.trackListPreview}
+                  >
+                    {albumDetails.trackList.map((track, i) => (
+                      <li style={{ fontSize: "12px" }}>{`${
+                        i + 1
+                      }. ${track}`}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
               <motion.button
                 className={styles.nextButton}
@@ -143,71 +154,75 @@ const Form: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      <h3>Search for Album</h3>
-      <div className={styles.resultsContainer}>
-        <input
-          className={`${styles.search} ${
-            searchResults.length > 0 ? styles.searchResultsOpen : ""
-          }`}
-          type="text"
-          placeholder="Search for album..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        {searchResults.length > 0 && (
-          <ul className={styles.results}>
-            {searchResults.map((result: any, index: number) => {
-              const date = new Date(result.release_date);
-              const days = [
-                "Sunday",
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Saturday",
-              ];
-              const months = [
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-              ];
-              return (
-                <li
-                  key={result.id}
-                  className={styles.result}
-                  onClick={() => updateAlbumInfo(result.id)}
-                >
-                  {result.images[0].url && (
-                    <img
-                      src={result.images[0].url}
-                      className={styles.resultImg}
-                    />
-                  )}
+      <div className={styles.mainContent}>
+        <h3>Search for Album</h3>
+        <div className={styles.resultsContainer}>
+          <input
+            className={`${styles.search} ${
+              searchResults.length > 0 ? styles.searchResultsOpen : ""
+            }`}
+            type="text"
+            placeholder="Search for album..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchResults.length > 0 && (
+            <ul className={styles.results}>
+              {searchResults.map((result: any, index: number) => {
+                const date = new Date(result.release_date);
+                const days = [
+                  "Sunday",
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                ];
+                const months = [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December",
+                ];
+                return (
+                  <li
+                    key={result.id}
+                    className={styles.result}
+                    onClick={() => updateAlbumInfo(result.id)}
+                  >
+                    {result.images[0].url && (
+                      <img
+                        src={result.images[0].url}
+                        className={styles.resultImg}
+                      />
+                    )}
 
-                  <div className={styles.text}>
-                    <h4 className={styles.albumTitle}>{result.name}</h4>
-                    <h5 className={styles.artist}>{result.artists[0].name}</h5>
-                    <p className={styles.resultExtraInfo}>{`Release Date: ${
-                      days[date.getDay()]
-                    } ${months[date.getMonth()]} ${date.getDate()} - ${
-                      result.total_tracks
-                    } tracks`}</p>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+                    <div className={styles.text}>
+                      <h4 className={styles.albumTitle}>{result.name}</h4>
+                      <h5 className={styles.artist}>
+                        {result.artists[0].name}
+                      </h5>
+                      <p className={styles.resultExtraInfo}>{`Release Date: ${
+                        days[date.getDay()]
+                      } ${months[date.getMonth()]} ${date.getDate()} - ${
+                        result.total_tracks
+                      } tracks`}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );

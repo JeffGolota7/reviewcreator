@@ -23,11 +23,11 @@ const Canvas: React.FC = () => {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
   const songTiers = [
-    { tierName: "Average", tierColor: "#FFFFFF" },
-    { tierName: "Good", tierColor: "#6FE17E" },
+    { tierName: "Average", tierColor: "#FFFFFF", range: ["4", "5", "6"] },
+    { tierName: "Good", tierColor: "#6FE17E", range: ["7", "8", "9"] },
     { tierName: "Favorite", tierColor: "#EDF12F" },
     { tierName: "Skit/Interlude", tierColor: "#12B1B8" },
-    { tierName: "Bad", tierColor: "#F7200E" },
+    { tierName: "Bad", tierColor: "#F7200E", range: ["0", "1", "2", "3"] },
   ];
 
   const calculateFontSize = (
@@ -40,15 +40,11 @@ const Canvas: React.FC = () => {
     // Calculate the available height per item
     const availableHeightPerItem = containerHeight / numberOfTracks;
 
-    console.log(containerHeight);
-
     // Ensure the calculated font size is within the defined min and max limits
     const fontSize = Math.max(
       minFontSize,
       Math.min(maxFontSize, availableHeightPerItem)
     );
-
-    console.log(fontSize);
 
     return `${fontSize}px`;
   };
@@ -113,7 +109,14 @@ const Canvas: React.FC = () => {
       }
 
       try {
-        const dataUrl = await domtoimage.toPng(containerElement);
+        const dataUrl = await domtoimage.toPng(containerElement, {
+          width: 1080,
+          height: 1920,
+          style: {
+            width: "1080px",
+            height: "1920px",
+          },
+        });
 
         // Remove any existing images inside the modal
         while (modal?.firstChild) {
@@ -121,6 +124,7 @@ const Canvas: React.FC = () => {
         }
 
         // Create and append the new image
+
         const img = new Image();
         img.onload = function () {
           modal?.appendChild(img);
@@ -128,6 +132,7 @@ const Canvas: React.FC = () => {
         img.onerror = function (error) {
           console.error("Failed to load image", error);
         };
+
         img.src = dataUrl;
       } catch (error) {
         console.error("oops, something went wrong!", error);
@@ -182,6 +187,15 @@ const Canvas: React.FC = () => {
       let totalScore = 0;
 
       trackRatings[index].rating = e.currentTarget.innerText;
+
+      songTiers.forEach((tier) => {
+        if (tier.range) {
+          if (tier.range.includes(e.currentTarget.innerText)) {
+            trackRatings[index].tier = tier;
+          }
+        }
+      });
+
       updateTracks(trackRatings);
 
       tracklistRatings.forEach((track) => {
