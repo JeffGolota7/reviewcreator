@@ -7,7 +7,4 @@ export default {
   // add your own custom config here if you want to.
   //
   // See https://remix.run/file-conventions/remix-config
-  dev: {
-    port: 8002,
-  },
 };

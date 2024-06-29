@@ -57,13 +57,11 @@
 
 .ratingControls {
   background-color: black;
-  padding: 1rem;
-  width: 100%;
+  padding: 0.5rem 10px;
   color: white;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  width: 90%;
   font-size: 1.5rem;
 }
 
@@ -75,6 +73,9 @@
 .trackRatingControl {
   margin: 0.75rem 0;
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 button {

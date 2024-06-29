@@ -5,7 +5,7 @@ import styles from "../styles/NavBar.module.css";
 
 const NavBar: React.FC = () => {
   const location = useLocation();
-  console.log(location);
+
   return (
     <nav className={styles.navDisplay}>
       <ul className={styles.links}>

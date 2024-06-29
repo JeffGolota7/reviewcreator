@@ -1,0 +1,47 @@
+.sliderContainer {
+  position: relative;
+  width: 150px;
+  overflow: hidden;
+}
+
+.ratingList {
+  display: flex;
+  font-size: 12px;
+  overflow-x: scroll;
+  padding: 0 60px; /* Add padding to the left and right to allow end items to center */
+  margin: 0;
+
+  list-style: none;
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+  scroll-snap-type: x mandatory; /* Enable scroll snap */
+
+  &::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+  }
+}
+
+.rating {
+  min-width: 20px;
+  font-size: 14px;
+  text-align: center;
+  scroll-snap-align: center; /* Snap each item to the center */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &::after {
+    content: "|";
+  }
+}
+
+.selectedRating {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: red;
+}

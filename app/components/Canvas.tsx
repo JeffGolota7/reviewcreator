@@ -4,13 +4,14 @@ import domtoimage from "dom-to-image";
 import { useLoaderData, useLocation } from "@remix-run/react";
 import styles from "../styles/Canvas.module.css";
 import { AnimatePresence, motion } from "framer-motion";
+import Slider from "./Slider";
 
 const Canvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const [tracklistRatings, updateTracks] = useState([{}]);
+  const [tracklistRatings, updateTracks] = useState([]);
   const [albumDetails, setAlbumDetails] = useState<any | null>(
     location.state && location.state.albumDetails
   );
@@ -125,7 +126,9 @@ const Canvas: React.FC = () => {
 
         // Create and append the new image
 
-        const img = new Image();
+        const img = new Image(); //MIGHT HAVE TO REVERT THIS BUT WE'LL SEE
+        img.style.width = "100%";
+        img.style.height = "auto";
         img.onload = function () {
           modal?.appendChild(img);
         };
@@ -213,6 +216,35 @@ const Canvas: React.FC = () => {
     }
   };
 
+  const handleSlider = (index, rating) => {
+    if (tracklistRatings.length > 1) {
+      const trackRatings = [...tracklistRatings];
+
+      if (trackRatings.length > 1) {
+        let totalScore = 0;
+
+        trackRatings[index].rating = rating;
+
+        songTiers.forEach((tier) => {
+          if (tier.range) {
+            if (tier.range.includes(rating.toString())) {
+              trackRatings[index].tier = tier;
+            }
+          }
+        });
+
+        updateTracks(trackRatings);
+
+        tracklistRatings.forEach((track) => {
+          totalScore = parseInt(totalScore) + parseInt(track.rating);
+        });
+
+        const averageScore = Math.round(totalScore / trackRatings.length);
+        updateOverallScore(averageScore);
+      }
+    }
+  };
+
   const handleTrackRatingClick = (e: React.MouseEvent<HTMLSpanElement>) => {
     const trackElement = e.target as HTMLSpanElement;
 
@@ -275,38 +307,22 @@ const Canvas: React.FC = () => {
           <ul>
             {tracklistRatings &&
               tracklistRatings.map((track, index) => {
-                let textColor;
-                if (
-                  tracklistRatings &&
-                  track &&
-                  track.tier &&
-                  track.tier.tierColor
-                ) {
-                  textColor = track.tier.tierColor;
-                } else {
-                  textColor = "#FFFFFF";
-                }
                 return (
                   <li className={styles.trackRatingControl}>
                     <span
-                      style={{ color: textColor }}
+                      style={{
+                        color: track?.tier?.tierColor
+                          ? track.tier.tierColor
+                          : "#FFFFFF",
+                      }}
                       onClick={() => handleTrackClick(track, index)}
                     >
                       {track.name}
                     </span>
-                    {" ("}
-                    <span
-                      contentEditable
-                      suppressContentEditableWarning={true}
-                      onInput={(e) => handleRatingChange(e, index, true)}
-                      onFocus={(e) =>
-                        document.execCommand("selectAll", false, null)
-                      }
-                      onClick={handleTrackRatingClick}
-                    >
-                      {`${track.rating ? track.rating : "0"}`}
-                    </span>
-                    {"/10)"}
+                    <Slider
+                      sliderChange={(rating) => handleSlider(index, rating)}
+                      value={track.rating}
+                    />
                   </li>
                 );
               })}
@@ -350,7 +366,7 @@ const Canvas: React.FC = () => {
           </button>
         </div>
       </div>
-      <div className={styles.canvasContainer}>
+      <div className={styles.canvasContainer} style={{ display: "none" }}>
         <div
           ref={containerRef}
           id="canvas"
@@ -404,6 +420,7 @@ const Canvas: React.FC = () => {
                     })}
                 </ul>
               </div>
+
               <div className={styles.right}>
                 <div className={styles.top}>
                   <span
