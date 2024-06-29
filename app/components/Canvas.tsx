@@ -303,70 +303,96 @@ const Canvas: React.FC = () => {
         )}
       </AnimatePresence>
       <div className={styles.ratingControls}>
+        <div className={styles.topAlbumSection}>
+          <img
+            src={albumDetails ? albumDetails.coverSrc : ""}
+            alt=""
+            className={styles.mainCover}
+          />
+          <div className={styles.albumText}>
+            <h2 className={styles.mainTitle}>{albumDetails.title}</h2>
+            <p className={styles.artistTitle}>{albumDetails.artist}</p>
+            <div className={styles.buttons}>
+              <label className={styles.uploadLabel}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleBackgroundImageChange}
+                />
+                Upload Background
+              </label>
+              <button
+                className={styles.button}
+                onClick={() => toggleModal(true)}
+                disabled={isDownloading}
+              >
+                {isDownloading ? "Downloading..." : "Generate Image"}
+              </button>
+            </div>
+          </div>
+        </div>
         <div className={styles.trackRatings}>
+          <div className={styles.biggerRatings}>
+            <h2 className={styles.overall}>
+              <span
+                contentEditable
+                suppressContentEditableWarning={true}
+                onInput={(e) => {
+                  handleRatingChange(e, 0, false, "overall");
+                }}
+                onClick={handleTrackRatingClick}
+              >{`${overallScore}`}</span>
+              {`/10`}
+            </h2>
+            <h2 className={styles.coverRating}>
+              {"Cover: "}
+              <span
+                contentEditable
+                suppressContentEditableWarning={true}
+                onInput={(e) => {
+                  handleRatingChange(e, 0, false, "cover");
+                }}
+                onClick={handleTrackRatingClick}
+              >{`${coverScore}`}</span>
+              {`/10`}
+            </h2>
+          </div>
           <ul>
             {tracklistRatings &&
               tracklistRatings.map((track, index) => {
                 return (
-                  <li className={styles.trackRatingControl}>
-                    <span
+                  <>
+                    <li
+                      className={styles.trackRatingControl}
                       style={{
-                        color: track?.tier?.tierColor
-                          ? track.tier.tierColor
-                          : "#FFFFFF",
+                        borderBottom:
+                          index !== tracklistRatings.length - 1
+                            ? "1px dotted rgb(67, 67, 67)"
+                            : "",
                       }}
-                      onClick={() => handleTrackClick(track, index)}
                     >
-                      {track.name}
-                    </span>
-                    <Slider
-                      sliderChange={(rating) => handleSlider(index, rating)}
-                      value={track.rating}
-                    />
-                  </li>
+                      <span
+                        style={{
+                          color: track?.tier?.tierColor
+                            ? track.tier.tierColor
+                            : "#FFFFFF",
+                        }}
+                        onClick={() => handleTrackClick(track, index)}
+                      >
+                        {track.name}
+                      </span>
+                      <Slider
+                        sliderChange={(rating) => handleSlider(index, rating)}
+                        value={track.rating}
+                      />
+                    </li>
+                  </>
                 );
               })}
           </ul>
-          <h2>
-            <span
-              contentEditable
-              suppressContentEditableWarning={true}
-              onInput={(e) => {
-                handleRatingChange(e, 0, false, "overall");
-              }}
-              onClick={handleTrackRatingClick}
-            >{`${overallScore}`}</span>
-            {`/10`}
-          </h2>
-          <h2>
-            {"Cover: "}
-            <span
-              contentEditable
-              suppressContentEditableWarning={true}
-              onInput={(e) => {
-                handleRatingChange(e, 0, false, "cover");
-              }}
-              onClick={handleTrackRatingClick}
-            >{`${coverScore}`}</span>
-            {`/10`}
-          </h2>
-        </div>
-        <div className={styles.buttons}>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleBackgroundImageChange}
-          />
-          <button
-            className={styles.button}
-            onClick={() => toggleModal(true)}
-            disabled={isDownloading}
-          >
-            {isDownloading ? "Downloading..." : "Generate Image"}
-          </button>
         </div>
       </div>
-      <div className={styles.canvasContainer}>
+      <div className={styles.canvasContainer} style={{ display: "none" }}>
         <div
           ref={containerRef}
           id="canvas"
