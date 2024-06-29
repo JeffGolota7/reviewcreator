@@ -2,12 +2,14 @@
   position: relative;
   width: 150px;
   overflow: hidden;
+  height: 50px;
 }
 
 .ratingList {
   display: flex;
   font-size: 12px;
   overflow-x: scroll;
+  overflow-y: hidden;
   padding: 0 60px; /* Add padding to the left and right to allow end items to center */
   margin: 0;
 

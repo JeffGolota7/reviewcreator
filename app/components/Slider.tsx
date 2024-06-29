@@ -33,6 +33,19 @@ const Slider = ({ sliderChange, value }) => {
 
   useEffect(() => {
     const list = listRef.current;
+    if (list) {
+      const itemWidth = 20; // Width of each rating item
+      const initialScrollLeft = value * itemWidth; // Calculate initial scroll position
+
+      list.scrollTo({
+        left: initialScrollLeft,
+        behavior: "smooth", // Optional: Smooth scrolling animation
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const list = listRef.current;
     list.addEventListener("scroll", handleScroll);
     return () => list.removeEventListener("scroll", handleScroll);
   }, []);

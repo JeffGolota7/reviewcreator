@@ -71,7 +71,7 @@ const Canvas: React.FC = () => {
         albumDetails.trackList.forEach((trackName: any) => {
           tracklistRatingsTemp.push({
             name: trackName,
-            rating: 0,
+            rating: 5,
             tier: songTiers[0],
           });
         });
