@@ -366,7 +366,7 @@ const Canvas: React.FC = () => {
           </button>
         </div>
       </div>
-      <div className={styles.canvasContainer} style={{ display: "none" }}>
+      <div className={styles.canvasContainer}>
         <div
           ref={containerRef}
           id="canvas"
