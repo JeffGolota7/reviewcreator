@@ -40,7 +40,10 @@
     rgba(0, 0, 0, 0)
   );
   width: 100%;
-  padding: 20px;
+}
+
+.albumTextContent {
+  padding: 10px;
 }
 
 .biggerRatings {
@@ -163,7 +166,7 @@ button {
   display: flex;
   margin-top: 5px;
   justify-content: space-between;
-  width: 90%;
+  width: 100%;
 
   input {
     width: auto;

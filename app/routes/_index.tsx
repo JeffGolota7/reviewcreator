@@ -1,6 +1,7 @@
 import { json } from "@remix-run/node";
 import Form from "../components/Form";
 import "../root.module.css";
+import { getReviews } from "~/api/firebase";
 export function headers({
   loaderHeaders,
   parentHeaders,
@@ -45,7 +46,9 @@ export async function loader() {
     return json({ error: "Failed to fetch access token" }, { status: 500 });
   }
 
-  return json({ accessToken });
+  const reviews = await getReviews();
+
+  return { reviews, accessToken };
 }
 
 export default function Index() {

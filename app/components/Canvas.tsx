@@ -5,6 +5,7 @@ import { useLoaderData, useLocation } from "@remix-run/react";
 import styles from "../styles/Canvas.module.css";
 import { AnimatePresence, motion } from "framer-motion";
 import Slider from "./Slider";
+import { postReview } from "~/api/firebase";
 
 const Canvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -15,11 +16,12 @@ const Canvas: React.FC = () => {
   const [albumDetails, setAlbumDetails] = useState<any | null>(
     location.state && location.state.albumDetails
   );
+  const { addReview } = useLoaderData();
+  console.log(addReview);
   const [overallScore, updateOverallScore] = useState(0);
   const [coverScore, updateCoverScore] = useState(0);
   const [showModal, toggleModal] = useState(false);
   let run = false;
-
   const [isDownloading, setIsDownloading] = useState(false);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
 
@@ -136,7 +138,14 @@ const Canvas: React.FC = () => {
           console.error("Failed to load image", error);
         };
 
+        const date = new Date();
+
         img.src = dataUrl;
+        postReview({
+          tracklistRatings: { ...tracklistRatings, overallScore, coverScore },
+          albumDetails,
+          reviewDate: date.toISOString(),
+        });
       } catch (error) {
         console.error("oops, something went wrong!", error);
       } finally {
@@ -144,6 +153,8 @@ const Canvas: React.FC = () => {
       }
     }
   };
+
+  console.log(new Date());
 
   const handleBackgroundImageChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -310,24 +321,31 @@ const Canvas: React.FC = () => {
             className={styles.mainCover}
           />
           <div className={styles.albumText}>
-            <h2 className={styles.mainTitle}>{albumDetails.title}</h2>
-            <p className={styles.artistTitle}>{albumDetails.artist}</p>
-            <div className={styles.buttons}>
-              <label className={styles.uploadLabel}>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleBackgroundImageChange}
-                />
-                Upload Background
-              </label>
-              <button
-                className={styles.button}
-                onClick={() => toggleModal(true)}
-                disabled={isDownloading}
-              >
-                {isDownloading ? "Downloading..." : "Generate Image"}
-              </button>
+            <div className={styles.albumTextContent}>
+              {albumDetails?.title && (
+                <h2 className={styles.mainTitle}>{albumDetails.title}</h2>
+              )}
+              {albumDetails?.artist && (
+                <p className={styles.artistTitle}>{albumDetails.artist}</p>
+              )}
+
+              <div className={styles.buttons}>
+                <label className={styles.uploadLabel}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBackgroundImageChange}
+                  />
+                  Upload Background
+                </label>
+                <button
+                  className={styles.button}
+                  onClick={() => toggleModal(true)}
+                  disabled={isDownloading}
+                >
+                  {isDownloading ? "Downloading..." : "Generate Image"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
