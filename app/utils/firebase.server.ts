@@ -4,14 +4,14 @@ import { Auth, getAuth } from "firebase-admin/auth";
 let app: App;
 let auth: Auth;
 
-if (getApps().length === 0) {
-  app = initializeApp({
-    credential: cert(require("../serviceAccountKey.json")),
-  });
-  auth = getAuth(app);
-} else {
-  app = getApp();
-  auth = getAuth(app);
-}
+// if (getApps().length === 0) {
+//   app = initializeApp({
+//     credential: cert(require("../serviceAccountKey.json")),
+//   });
+//   auth = getAuth(app);
+// } else {
+//   app = getApp();
+//   auth = getAuth(app);
+// }
 
-export { auth };
+// export { auth };

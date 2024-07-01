@@ -56,6 +56,10 @@
   font-weight: bold;
 }
 
+.coverRatingText {
+  font-size: 40px;
+}
+
 .coverRating {
   font-size: 20px;
 }

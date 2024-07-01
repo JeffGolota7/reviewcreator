@@ -85,8 +85,6 @@ const Form: React.FC = () => {
     }
   };
 
-  console.log(reviews);
-
   return (
     <div className={styles.formContainer}>
       <AnimatePresence>

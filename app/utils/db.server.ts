@@ -1,4 +1,3 @@
-import "../../serviceAccountKey.json";
 // app/firebase.js
 import {
   initializeApp,

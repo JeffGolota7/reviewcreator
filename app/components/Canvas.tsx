@@ -17,7 +17,6 @@ const Canvas: React.FC = () => {
     location.state && location.state.albumDetails
   );
   const { addReview } = useLoaderData();
-  console.log(addReview);
   const [overallScore, updateOverallScore] = useState(0);
   const [coverScore, updateCoverScore] = useState(0);
   const [showModal, toggleModal] = useState(false);
@@ -153,8 +152,6 @@ const Canvas: React.FC = () => {
       }
     }
   };
-
-  console.log(new Date());
 
   const handleBackgroundImageChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -477,7 +474,7 @@ const Canvas: React.FC = () => {
                 </div>
                 <div className={styles.bottom}>
                   <div className={styles.coverAndRating}>
-                    <div className={styles.coverRating}>
+                    <div className={styles.coverRatingText}>
                       {"Cover: "}
                       <span
                         contentEditable
