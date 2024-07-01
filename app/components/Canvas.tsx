@@ -16,7 +16,6 @@ const Canvas: React.FC = () => {
   const [albumDetails, setAlbumDetails] = useState<any | null>(
     location.state && location.state.albumDetails
   );
-  const { addReview } = useLoaderData();
   const [overallScore, updateOverallScore] = useState(0);
   const [coverScore, updateCoverScore] = useState(0);
   const [showModal, toggleModal] = useState(false);

@@ -43,9 +43,9 @@ export async function loader() {
     return json({ error: "Failed to fetch access token" }, { status: 500 });
   }
 
-  const reviews = await getReviews();
+  // const reviews = await getReviews();
 
-  return { reviews, accessToken };
+  return { accessToken };
 }
 
 export default function Index() {

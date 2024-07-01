@@ -12,7 +12,7 @@ const Form: React.FC = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [albumDetails, setAlbumDetails] = useState<any | null>(null);
   const navigate = useNavigate();
-  const { reviews, accessToken } = useLoaderData();
+  const { accessToken } = useLoaderData();
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {

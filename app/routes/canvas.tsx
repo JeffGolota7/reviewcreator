@@ -16,14 +16,7 @@ export function headers({
 }
 
 export async function loader() {
-  return {
-    addReview: ({ tracklistRatings, albumDetails, reviewDate }) =>
-      postReview({
-        tracklistRatings,
-        albumDetails,
-        reviewDate,
-      }),
-  };
+  return {};
 }
 
 export default function Index() {
