@@ -1,35 +1,39 @@
-// import { db } from "../utils/db.server";
-// import { doc, setDoc } from "firebase/firestore";
-// import { collection, addDoc } from "firebase/firestore";
+import { db } from "./db.server";
 
-// export async function getReviews() {
-//   const querySnapshot = await db.collection("album-reviews").get();
-//   const data = [];
-//   querySnapshot.forEach((doc) => {
-//     data.push({ ...doc.data(), id: doc.id });
-//   });
-//   return data;
-// }
+export async function getReviews() {
+  const querySnapshot = await db.collection("album-reviews").get();
 
-// export async function postReview({
-//   tracklistRatings,
-//   albumDetails,
-//   reviewDate,
-// }) {
-//   const id = `${albumDetails.title} ${albumDetails.artist}`.replace(" ", "-");
+  const data = [];
+  querySnapshot.forEach((doc) => {
+    data.push({ ...doc.data(), id: doc.id });
+  });
 
-//   const albumReviewsRef = await db.collection("album-reviews");
+  return data;
+}
 
-//   const docRef = await albumReviewsRef.doc(id);
+export async function createReview({
+  tracklistRatings,
+  overallScore,
+  coverScore,
+  albumDetails,
+  reviewDate,
+}) {
+  const id = `${albumDetails.title} ${albumDetails.artist}`;
 
-//   await docRef.set({
-//     id,
-//     reviewDate,
-//     rating: tracklistRatings.overallScore,
-//     coverRating: tracklistRatings.coverScore,
-//     trackRatings: tracklistRatings.tracks,
-//     coverArtSrc: albumDetails.coverSrc,
-//     title: albumDetails.title,
-//     artist: albumDetails.artist,
-//   });
-// }
+  const lowercaseId = id.toLowerCase();
+
+  const docRef = db
+    .collection("album-reviews")
+    .doc(lowercaseId.replace(/ /g, "-"));
+
+  await docRef.set({
+    id,
+    reviewDate,
+    rating: overallScore,
+    coverRating: coverScore,
+    trackRatings: tracklistRatings,
+    coverArtSrc: albumDetails.coverSrc,
+    title: albumDetails.title,
+    artist: albumDetails.artist,
+  });
+}

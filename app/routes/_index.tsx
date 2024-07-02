@@ -2,6 +2,8 @@ import { json } from "@remix-run/node";
 import Form from "../components/Form";
 import "../root.module.css";
 import { getReviews } from "~/api/firebase";
+import RecentReviews from "~/components/RecentReviews";
+import { useLoaderData } from "@remix-run/react";
 export function headers({
   loaderHeaders,
   parentHeaders,
@@ -43,15 +45,17 @@ export async function loader() {
     return json({ error: "Failed to fetch access token" }, { status: 500 });
   }
 
-  // const reviews = await getReviews();
+  const reviews = await getReviews();
 
-  return { accessToken };
+  return { reviews, accessToken };
 }
 
 export default function Index() {
+  const { reviews } = useLoaderData();
   return (
     <>
       <Form />
+      <RecentReviews reviews={reviews} />
     </>
   );
 }

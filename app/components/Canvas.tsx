@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { domToPng } from "modern-screenshot";
 import domtoimage from "dom-to-image";
-import { useLoaderData, useLocation } from "@remix-run/react";
+import { useLocation, useSubmit } from "@remix-run/react";
 import styles from "../styles/Canvas.module.css";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Slider from "./Slider";
-import { postReview } from "~/api/firebase";
+import { createReview } from "~/api/db.server";
+import Modal from "./Modal";
 
 const Canvas: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,6 +16,7 @@ const Canvas: React.FC = () => {
   const [albumDetails, setAlbumDetails] = useState<any | null>(
     location.state && location.state.albumDetails
   );
+  const submit = useSubmit();
   const [overallScore, updateOverallScore] = useState(0);
   const [coverScore, updateCoverScore] = useState(0);
   const [showModal, toggleModal] = useState(false);
@@ -61,7 +62,7 @@ const Canvas: React.FC = () => {
         savedAlbumDetails &&
         savedTracklistRatings &&
         savedOverallScore &&
-        JSON.parse(savedAlbumDetails).title === albumDetails.title
+        JSON.parse(savedAlbumDetails)?.title === albumDetails.title
       ) {
         setAlbumDetails(JSON.parse(savedAlbumDetails));
         updateTracks(JSON.parse(savedTracklistRatings));
@@ -105,10 +106,6 @@ const Canvas: React.FC = () => {
     if (containerElement) {
       setIsDownloading(true);
 
-      if (!showModal) {
-        toggleModal(true);
-      }
-
       try {
         const dataUrl = await domtoimage.toPng(containerElement, {
           width: 1080,
@@ -139,11 +136,19 @@ const Canvas: React.FC = () => {
         const date = new Date();
 
         img.src = dataUrl;
-        postReview({
-          tracklistRatings: { ...tracklistRatings, overallScore, coverScore },
-          albumDetails,
-          reviewDate: date.toISOString(),
-        });
+
+        submit(
+          {
+            reviewData: {
+              tracklistRatings,
+              overallScore,
+              coverScore,
+              albumDetails,
+              reviewDate: date.toISOString(),
+            },
+          },
+          { method: "post", encType: "application/json" }
+        );
       } catch (error) {
         console.error("oops, something went wrong!", error);
       } finally {
@@ -267,48 +272,26 @@ const Canvas: React.FC = () => {
 
   return (
     <>
-      <AnimatePresence>
-        {showModal && (
-          <motion.div
-            className={styles.modalOverlay}
-            onClick={(e) => {
-              if (
-                !e.target.classList.contains(styles.modal) &&
-                !e.target.classList.contains(styles.button)
-              ) {
-                toggleModal(false);
-              }
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <motion.div
-              className={styles.modal}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              transition={{ duration: 0.2 }}
+      {showModal && (
+        <Modal showModal={showModal} toggleModal={toggleModal}>
+          <div className={styles.modalContent}>
+            <div className={styles.resultImg} ref={modalRef}></div>
+            <motion.button
+              className={styles.button}
+              disabled={!albumDetails}
+              whileHover={{
+                scale: 1.2,
+                transition: { duration: 1 },
+              }}
+              whileTap={{ scale: 0.9 }}
+              style={{ justifySelf: "center" }}
+              onClick={handleImageGen}
             >
-              <div className={styles.resultImg} ref={modalRef}></div>
-              <motion.button
-                className={styles.button}
-                disabled={!albumDetails}
-                whileHover={{
-                  scale: 1.2,
-                  transition: { duration: 1 },
-                }}
-                whileTap={{ scale: 0.9 }}
-                style={{ justifySelf: "center" }}
-                onClick={handleImageGen}
-              >
-                Generate
-              </motion.button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              Generate
+            </motion.button>
+          </div>
+        </Modal>
+      )}
       <div className={styles.ratingControls}>
         <div className={styles.topAlbumSection}>
           <img
@@ -375,32 +358,31 @@ const Canvas: React.FC = () => {
             {tracklistRatings &&
               tracklistRatings.map((track, index) => {
                 return (
-                  <>
-                    <li
-                      className={styles.trackRatingControl}
+                  <li
+                    className={styles.trackRatingControl}
+                    key={track.name}
+                    style={{
+                      borderBottom:
+                        index !== tracklistRatings.length - 1
+                          ? "1px dotted rgb(67, 67, 67)"
+                          : "",
+                    }}
+                  >
+                    <span
                       style={{
-                        borderBottom:
-                          index !== tracklistRatings.length - 1
-                            ? "1px dotted rgb(67, 67, 67)"
-                            : "",
+                        color: track?.tier?.tierColor
+                          ? track.tier.tierColor
+                          : "#FFFFFF",
                       }}
+                      onClick={() => handleTrackClick(track, index)}
                     >
-                      <span
-                        style={{
-                          color: track?.tier?.tierColor
-                            ? track.tier.tierColor
-                            : "#FFFFFF",
-                        }}
-                        onClick={() => handleTrackClick(track, index)}
-                      >
-                        {track.name}
-                      </span>
-                      <Slider
-                        sliderChange={(rating) => handleSlider(index, rating)}
-                        value={track.rating}
-                      />
-                    </li>
-                  </>
+                      {track.name}
+                    </span>
+                    <Slider
+                      sliderChange={(rating) => handleSlider(index, rating)}
+                      value={track.rating}
+                    />
+                  </li>
                 );
               })}
           </ul>
@@ -425,8 +407,8 @@ const Canvas: React.FC = () => {
           ></div>
           <div className={styles.content}>
             <h2 className={styles.title} style={{ marginTop: "200px" }}>{`${
-              albumDetails ? albumDetails.artist : ""
-            } - ${albumDetails ? albumDetails.title : ""}`}</h2>
+              albumDetails ? albumDetails?.artist : ""
+            } - ${albumDetails ? albumDetails?.title : ""}`}</h2>
             <div className={styles.albumDetails}>
               <div className={styles.left} ref={leftRef}>
                 <ul>

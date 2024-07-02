@@ -4,6 +4,7 @@
   background-color: #0f0f0f;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .logo {
@@ -23,4 +24,10 @@
 .link {
   font-size: 22px;
   padding: 0 20px;
+  color: white;
+}
+
+a[aria-current="page"] {
+  color: green;
+  font-weight: bold;
 }

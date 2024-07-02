@@ -1,0 +1,60 @@
+.recentReviewsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+
+  .buttonsAndContent {
+    max-height: 500px;
+    overflow-y: scroll;
+    background-color: #383838;
+    padding: 20px;
+    width: 80vw;
+    border-radius: 8px;
+    margin-top: 10px;
+    .filters {
+      border-bottom: 1px dotted #575757;
+      padding-bottom: 10px;
+    }
+  }
+}
+
+.resultImg {
+  max-height: 80px;
+  width: auto;
+  margin-right: 10px;
+  border-radius: 8px;
+}
+
+.recentlyReviewedHeader {
+  font-size: 20px;
+}
+
+.recentReview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+
+  .left {
+    display: flex;
+
+    p {
+      margin: 0;
+    }
+
+    .reviewDate {
+      font-size: 12px;
+    }
+  }
+
+  .right {
+    h2 {
+      font-size: 30px;
+      background-color: green;
+      padding: 8px;
+      border-radius: 8px;
+    }
+  }
+}
