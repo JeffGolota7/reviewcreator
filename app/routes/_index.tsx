@@ -52,10 +52,11 @@ export async function loader() {
 
 export default function Index() {
   const { reviews } = useLoaderData();
+
   return (
     <>
       <Form />
-      <RecentReviews reviews={reviews} />
+      {reviews && <RecentReviews reviews={reviews} />}
     </>
   );
 }
