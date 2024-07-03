@@ -1,9 +1,8 @@
 import admin from "firebase-admin";
-import {
-  applicationDefault,
-  initializeApp as initializeAdminApp,
-} from "firebase-admin/app";
+import { initializeApp as initializeAdminApp } from "firebase-admin/app";
 import { initializeApp } from "firebase/app";
+
+import { FIREBASE_KEY } from "./config";
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -16,7 +15,7 @@ const firebaseConfig = {
 
 if (!admin.apps.length) {
   initializeAdminApp({
-    credential: applicationDefault(),
+    credential: admin.credential.cert(FIREBASE_KEY),
     databaseURL: "https://review-creator.firebaseio.com",
   });
 }
