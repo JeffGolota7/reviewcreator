@@ -49,6 +49,7 @@ export function ErrorBoundary() {
 }
 
 export default function App() {
+  console.log("test");
   return (
     <html lang="en">
       <head>
