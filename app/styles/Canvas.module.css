@@ -192,6 +192,18 @@ button {
   }
 }
 
+.modalButtons {
+  display: flex;
+  margin-top: 5px;
+  justify-content: space-between;
+  width: 100%;
+  .button {
+    padding: 0.5rem 1rem;
+    font-size: 18px;
+    width: 45%;
+  }
+}
+
 input[type="file"] {
   display: none;
 }

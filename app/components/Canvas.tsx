@@ -36,7 +36,7 @@ const Canvas: React.FC = () => {
     containerHeight: number,
     numberOfTracks: number
   ) => {
-    const maxFontSize = 40; // Maximum font size
+    const maxFontSize = 30; // Maximum font size
     const minFontSize = 10; // Minimum font size
 
     // Calculate the available height per item
@@ -132,23 +132,7 @@ const Canvas: React.FC = () => {
         img.onerror = function (error) {
           console.error("Failed to load image", error);
         };
-
-        const date = new Date();
-
         img.src = dataUrl;
-
-        submit(
-          {
-            reviewData: {
-              tracklistRatings,
-              overallScore,
-              coverScore,
-              albumDetails,
-              reviewDate: date.toISOString(),
-            },
-          },
-          { method: "post", encType: "application/json" }
-        );
       } catch (error) {
         console.error("oops, something went wrong!", error);
       } finally {
@@ -276,19 +260,49 @@ const Canvas: React.FC = () => {
         <Modal showModal={showModal} toggleModal={toggleModal}>
           <div className={styles.modalContent}>
             <div className={styles.resultImg} ref={modalRef}></div>
-            <motion.button
-              className={styles.button}
-              disabled={!albumDetails}
-              whileHover={{
-                scale: 1.2,
-                transition: { duration: 1 },
-              }}
-              whileTap={{ scale: 0.9 }}
-              style={{ justifySelf: "center" }}
-              onClick={handleImageGen}
-            >
-              Generate
-            </motion.button>
+            <div className={styles.modalButtons}>
+              <motion.button
+                className={styles.button}
+                disabled={!albumDetails}
+                whileHover={{
+                  scale: 1.2,
+                  transition: { duration: 1 },
+                }}
+                whileTap={{ scale: 0.9 }}
+                style={{ justifySelf: "center" }}
+                onClick={handleImageGen}
+              >
+                Generate
+              </motion.button>
+              <motion.button
+                className={styles.button}
+                disabled={!albumDetails}
+                whileHover={{
+                  scale: 1.2,
+                  transition: { duration: 1 },
+                }}
+                whileTap={{ scale: 0.9 }}
+                style={{ justifySelf: "center" }}
+                onClick={() => {
+                  const date = new Date();
+
+                  submit(
+                    {
+                      reviewData: {
+                        tracklistRatings,
+                        overallScore,
+                        coverScore,
+                        albumDetails,
+                        reviewDate: date.toISOString(),
+                      },
+                    },
+                    { method: "post", encType: "application/json" }
+                  );
+                }}
+              >
+                Save Review
+              </motion.button>
+            </div>
           </div>
         </Modal>
       )}

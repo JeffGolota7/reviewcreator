@@ -1,8 +1,6 @@
-import { json } from "@remix-run/node";
 import "../root.module.css";
 import { getReviews } from "~/api/firebase";
-import RecentReviews from "~/components/RecentReviews";
-import { useLoaderData } from "@remix-run/react";
+import AOTYRankings from "~/components/AOTYRankings";
 export function headers({
   loaderHeaders,
   parentHeaders,
@@ -23,7 +21,5 @@ export async function loader() {
 }
 
 export default function Index() {
-  const { reviews } = useLoaderData();
-
-  return <>AOTY</>;
+  return <AOTYRankings />;
 }

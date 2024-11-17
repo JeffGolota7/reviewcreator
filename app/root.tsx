@@ -49,7 +49,6 @@ export function ErrorBoundary() {
 }
 
 export default function App() {
-  console.log("test");
   return (
     <html lang="en">
       <head>
@@ -73,7 +72,7 @@ export default function App() {
           httpEquiv="Content-Security-Policy"
           content="upgrade-insecure-requests"
         />
-        <link rel="shortcut icon" href="/assets/images/favicon/favicon.ico" />
+        <link rel="shortcut icon" href="/favicon.ico" />
 
         <link
           rel="apple-touch-icon"

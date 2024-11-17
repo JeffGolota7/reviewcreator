@@ -1,0 +1,38 @@
+.rankingListContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .rankingList {
+    background: #383838;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    .rankingItem {
+      margin: 10px 20px;
+      font-size: 20px;
+      .container {
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        .left {
+          display: flex;
+          .artist {
+            margin: 0;
+          }
+          .cover {
+            max-height: 50px;
+            width: auto;
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* .aotyImg {
+  background: url("./images/background.png");
+} */
