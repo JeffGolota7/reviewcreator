@@ -127,7 +127,7 @@
 
 .ratingControls {
   background-color: black;
-  padding: 0.5rem 10px;
+  padding: 0.5rem 10px 5rem 10px;
   color: white;
   display: flex;
   flex-direction: column;

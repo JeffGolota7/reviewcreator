@@ -149,8 +149,8 @@ const Form: React.FC = () => {
           {searchResults.length > 0 && (
             <ul className={styles.results}>
               {searchResults.map((result: any, index: number) => {
-                const date = new Date(result.release_date);
-                return (
+                const date = result ? new Date(result.release_date) : null;
+                return result ? (
                   <li
                     key={result.id}
                     className={styles.result}
@@ -168,13 +168,17 @@ const Form: React.FC = () => {
                       <h5 className={styles.artist}>
                         {result.artists[0].name}
                       </h5>
-                      <p className={styles.resultExtraInfo}>{`Release Date: ${
-                        days[date.getDay()]
-                      } ${months[date.getMonth()]} ${date.getDate()} - ${
-                        result.total_tracks
-                      } tracks`}</p>
+                      {date && (
+                        <p className={styles.resultExtraInfo}>{`Release Date: ${
+                          days[date.getDay()]
+                        } ${months[date.getMonth()]} ${date.getDate()} - ${
+                          result.total_tracks
+                        } tracks`}</p>
+                      )}
                     </div>
                   </li>
+                ) : (
+                  <></>
                 );
               })}
             </ul>

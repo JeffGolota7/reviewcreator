@@ -36,7 +36,7 @@ const Canvas: React.FC = () => {
     containerHeight: number,
     numberOfTracks: number
   ) => {
-    const maxFontSize = 30; // Maximum font size
+    const maxFontSize = 36; // Maximum font size
     const minFontSize = 10; // Minimum font size
 
     // Calculate the available height per item
@@ -232,7 +232,8 @@ const Canvas: React.FC = () => {
         updateTracks(trackRatings);
 
         tracklistRatings.forEach((track) => {
-          totalScore = parseInt(totalScore) + parseInt(track.rating);
+          if (track.tier.tierName !== "Skit/Interlude")
+            totalScore = parseInt(totalScore) + parseInt(track.rating);
         });
 
         const averageScore = Math.round(totalScore / trackRatings.length);
